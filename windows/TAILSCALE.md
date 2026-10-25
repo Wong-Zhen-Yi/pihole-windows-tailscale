@@ -31,6 +31,13 @@ For direct Compose commands, specify both files in this order:
 docker compose --file .\windows\compose.yaml --file .\windows\compose.tailscale.yaml ps
 ```
 
+For the optional [Chrome launch helper](../chrome-extension/README.md#launch-pi-hole-from-chrome-on-windows),
+install while this Tailscale deployment exists so its mode is detected correctly,
+or explicitly choose `-Mode Tailscale`. It preserves existing containers' bindings
+and includes the overlay when creating a missing container. Connect Tailscale
+before using **Launch Pi-hole**. Reinstall the helper after deliberately changing
+deployment mode; it does not change firewall rules or Tailscale DNS settings.
+
 ## 2. Allow DNS through the Windows firewall
 
 Run the following in **Administrator PowerShell**. These rules apply only to

@@ -1,0 +1,8 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "pihole-mcp",
+  "version": "0.1.0",
+  "description": "Inspect and manage the local Pi-hole v6 Docker deployment.",
+  "license": "EUPL-1.2",
+  "extensions": { "com.openai": { "requires_local_executor": true } }
+}

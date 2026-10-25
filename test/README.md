@@ -49,6 +49,43 @@ These checks do not replace the Linux/BATS suite or an end-to-end DNS test.
 See [the Windows guide](../windows/README.md) for deployment and WSL development
 requirements.
 
+## Chrome extension tests
+
+Run `node --test test/test_chrome_extension.mjs` with Node.js 22 or newer.
+These mocked tests cover Pi-hole v6 API requests, credentials, failure handling,
+host permission scoping and popup behavior. They do not contact live Pi-hole,
+alter blocking or verify client DNS. See the
+[extension guide](../chrome-extension/README.md) for installation and manual checks.
+Optional `node test/test_chrome_extension_browser.cjs` uses Playwright and an
+installed Google Chrome to check the rendered views, query filters, safe text,
+domain rule review, rejected writes and refresh/session behavior in an isolated
+headless browser with mocked API responses.
+
+The optional Windows launch helper has additional checks:
+
+```powershell
+node --test test/test_chrome_native_host.mjs
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\test\test_chrome_helper.ps1
+pwsh -NoProfile -File .\test\test_chrome_helper.ps1
+```
+
+Native host checks use a temporary unregistered installation and harmless worker
+fixture to test caller restrictions, framing and fixed actions. Startup checks
+mock Docker and Docker Desktop, including stopped/running containers, mode
+mismatches, volume validation and initial creation with the correct overlay.
+Browser checks mock native messaging. These do not stop live DNS or prove a real
+Docker cold boot succeeds. See the extension guide for per-user installation.
+
+## Pi-hole MCP tests
+
+Install the local server dependencies with `npm --prefix .\pihole-mcp ci --ignore-scripts`,
+then run `npm --prefix .\pihole-mcp test` with Node.js 22+. These tests mock writes
+and check input validation, request scoping, privacy defaults, session cleanup
+structure, error handling and metadata preservation. They do not change Pi-hole.
+`npm --prefix .\pihole-mcp run smoke` also checks the actual stdio MCP handshake,
+tool discovery and live read-only Pi-hole status. See the
+[MCP guide](../pihole-mcp/README.md) for prerequisites and recovery.
+
 ## Optional: override BATS library versions
 
 `test/run.sh` accepts optional environment variable overrides when building test images:

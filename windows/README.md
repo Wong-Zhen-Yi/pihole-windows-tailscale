@@ -89,6 +89,20 @@ devices too; it is not a phone-only setting.
 
 ## Manage and update
 
+For agent access to status, query inspection, exact domain rules, subscriptions,
+timed blocking pauses and gravity refresh, see the [local Pi-hole MCP](../pihole-mcp/README.md).
+It uses Docker and the existing container CLI authentication, opens no new port,
+and preserves Tailscale bindings. Installing it does not change filtering rules.
+
+For Chrome toolbar statistics, top activity, query inspection and domain tools, optionally load
+the [Pi-hole Companion extension](../chrome-extension/README.md). It connects to
+the existing Pi-hole v6 API and does not configure DNS. Its optional per-user
+[Windows launch helper](../chrome-extension/README.md#launch-pi-hole-from-chrome-on-windows)
+starts Docker Desktop and the local deployment, preserving its installed
+Local/Tailscale mode. It registers access for one extension ID and opens no port.
+Its pause button affects all clients using Pi-hole; exact domain additions apply
+to the Default group after reviewing and adding a rule.
+
 ```powershell
 .\windows\pihole.ps1 Logs    # Follow logs; Ctrl+C stops following, not Pi-hole
 .\windows\pihole.ps1 Stop    # Stop without deleting settings

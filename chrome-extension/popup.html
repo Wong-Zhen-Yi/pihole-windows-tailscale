@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pi-hole Companion</title>
+  <link rel="stylesheet" href="popup.css">
+  <script type="module" src="popup.js"></script>
+</head>
+<body>
+  <header>
+    <img src="icons/48.png" width="36" height="36" alt="">
+    <div><h1>Pi-hole <span>Companion</span></h1><p>Your network, at a glance.</p></div>
+    <button id="expand" class="link" type="button" title="Open a larger extension view">Expand ↗</button>
+  </header>
+  <main>
+    <section class="status-card" aria-label="Pi-hole connection">
+      <div class="eyebrow">NETWORK PROTECTION</div>
+      <h2 id="status" role="status">Connect your Pi-hole</h2>
+      <p id="detail">Use your existing Pi-hole v6 server.</p>
+      <p id="server-name" class="server"></p>
+    </section>
+    <p id="error" class="notice error" role="alert" hidden></p>
+    <section class="launch-card" aria-label="Windows Pi-hole launcher">
+      <div class="actions"><button id="launch-pihole" type="button">Launch Pi-hole</button><button id="launch-status" type="button">Check startup</button></div>
+      <p id="launch-message" class="caption" role="status">Start this Windows PC's Pi-hole, even before signing in.</p>
+      <details><summary>Setup Windows launcher</summary>
+        <p class="caption">Requires the helper on this Windows PC. It can start Docker Desktop and Pi-hole; it cannot start a remote server.</p>
+        <p class="caption">Run this once in PowerShell from the Pi-hole repository. It registers the helper for your Windows user and detects the current Local/Tailscale deployment mode.</p>
+        <pre id="launch-setup"></pre>
+        <p class="caption">After moving the repository or changing its deployment mode, reinstall the helper. See chrome-extension/README.md for setup and removal.</p>
+      </details>
+    </section>
+    <section id="workspace" hidden>
+      <div class="toolbar">
+        <button id="refresh" type="button">Refresh</button>
+        <label class="check"><input id="auto-refresh" type="checkbox"> Refresh every 15s</label>
+        <span id="updated" class="caption"></span>
+      </div>
+      <nav aria-label="Companion views">
+        <button id="nav-overview" type="button" aria-current="page">Overview</button>
+        <button id="nav-activity" type="button">Top activity</button>
+        <button id="nav-queries" type="button">Query log</button>
+        <button id="nav-tools" type="button">Tools</button>
+      </nav>
+      <section id="overview" aria-label="Query statistics">
+        <div class="metrics">
+          <div><span>Total queries</span><strong id="total">—</strong></div>
+          <div><span>Blocked queries</span><strong id="blocked">—</strong></div>
+          <div><span>Blocked share</span><strong id="percent">—</strong></div>
+          <div><span>Active clients · 24h</span><strong id="clients">—</strong></div>
+        </div>
+        <div class="meter" aria-hidden="true"><div id="blocked-meter"></div></div>
+        <p class="caption">Blocked share of queries in Pi-hole's current statistics window.</p>
+        <dl class="facts">
+          <div><dt>Domains on blocklists</dt><dd id="gravity">—</dd></div>
+          <div><dt>Unique queried domains</dt><dd id="unique">—</dd></div>
+          <div><dt>Cached / local replies</dt><dd id="cached">—</dd></div>
+          <div><dt>Forwarded upstream</dt><dd id="forwarded">—</dd></div>
+          <div><dt>Queries per second</dt><dd id="frequency">—</dd></div>
+          <div><dt>Last gravity update</dt><dd id="gravity-updated">—</dd></div>
+        </dl>
+      </section>
+      <section id="activity" hidden aria-label="Top network activity">
+        <p class="caption">Top 10 in Pi-hole's current statistics window. Privacy settings may hide details.</p>
+        <details open><summary>Most blocked domains</summary><div id="top-blocked" class="ranking"></div></details>
+        <details><summary>Most queried permitted domains</summary><div id="top-permitted" class="ranking"></div></details>
+        <details><summary>Most active clients</summary><div id="top-clients" class="ranking"></div></details>
+        <details><summary>Upstream destinations</summary><div id="upstreams" class="ranking"></div></details>
+        <p id="activity-updated" class="caption"></p>
+      </section>
+      <section id="queries" hidden aria-label="Recent DNS queries">
+        <form id="query-form" class="filter-form">
+          <label for="query-domain">Filter by exact domain</label>
+          <div class="input-row"><input id="query-domain" placeholder="All domains" autocomplete="off" spellcheck="false"><button id="query-search" type="submit">Search</button></div>
+          <label class="check"><input id="queries-blocked" type="checkbox"> Blocked queries only</label>
+        </form>
+        <p id="queries-note" class="caption">Most recent 25 queries. Names may be hidden by Pi-hole privacy settings.</p>
+        <div id="query-results"></div>
+        <p id="queries-updated" class="caption"></p>
+      </section>
+      <section id="tools" hidden aria-label="Domain tools">
+        <h3>Exact domain rules</h3>
+        <p class="caption">Allow or block one hostname for clients in Pi-hole's Default group (ID 0). Subdomains are separate. Existing rules are preserved.</p>
+        <label for="rule-domain">Domain</label>
+        <input id="rule-domain" placeholder="ads.example.com" autocomplete="off" spellcheck="false">
+        <div class="actions"><button id="current-site" type="button">Use current site</button><button id="inspect-rules" type="button">Check existing rules</button></div>
+        <div id="rule-results"></div>
+        <div class="actions"><button id="allow-domain" type="button">Review allow rule</button><button id="deny-domain" type="button">Review block rule</button></div>
+        <div id="rule-review" class="notice" hidden>
+          <p id="rule-preview"></p>
+          <div class="actions"><button id="confirm-rule" type="button">Add rule</button><button id="cancel-rule" type="button">Cancel</button></div>
+        </div>
+        <p id="rule-message" role="status"></p>
+        <p class="caption">Allow rules can override blocklists. Manage groups, regex rules and removals in the dashboard.</p>
+      </section>
+      <section class="blocking-controls" aria-label="Blocking controls">
+        <div class="input-row">
+          <select id="pause-duration" aria-label="Pause duration">
+            <option value="30">30 seconds</option><option value="60">1 minute</option>
+            <option value="300" selected>5 minutes</option><option value="600">10 minutes</option>
+            <option value="1800">30 minutes</option><option value="3600">1 hour</option>
+          </select>
+          <button id="blocking" type="button" disabled>Pause blocking</button>
+        </div>
+        <p class="caption">Affects every client using this Pi-hole. Pauses end automatically.</p>
+      </section>
+    </section>
+    <details id="settings" open>
+      <summary>Connection settings</summary>
+      <form id="connect-form">
+        <label for="server">Pi-hole address</label>
+        <input id="server" type="url" value="http://localhost:8080" required spellcheck="false" autocomplete="off">
+        <label for="password">Password or application password</label>
+        <input id="password" type="password" autocomplete="off" placeholder="Leave blank if the server has no password">
+        <p class="caption">Password is never saved. Your session stays in memory until it expires or Chrome restarts. Use HTTP only on a trusted local network or Tailscale.</p>
+        <button id="connect" class="primary" type="submit">Save & connect</button>
+      </form>
+      <button id="disconnect" type="button" hidden>Sign out & forget server</button>
+    </details>
+    <footer><button id="dashboard" class="link" type="button">Open dashboard ↗</button><span>PI-HOLE v6 · COMPANION 1.2</span></footer>
+    <p class="footnote">Devices must already use Pi-hole DNS. The optional helper starts the local deployment.</p>
+  </main>
+</body>
+</html>

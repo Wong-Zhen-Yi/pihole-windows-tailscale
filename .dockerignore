@@ -1,2 +1,3 @@
 test/libs/
 windows/.env
+pihole-mcp/node_modules/
