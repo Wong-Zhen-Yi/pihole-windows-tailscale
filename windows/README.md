@@ -89,6 +89,14 @@ devices too; it is not a phone-only setting.
 
 ## Manage and update
 
+For an Electron GUI with Start/Stop, dashboard access, container health and a
+Windows tray icon, see [Pi-hole Desktop](../desktop/README.md). Settings includes
+**Launch at Windows sign-in** and a separate **Start Pi-hole when this app opens**
+option; both default to off. The app preserves existing container bindings and
+data. It can start Docker Desktop, but Tailscale must already be connected when
+its address is used. Closing the GUI leaves Pi-hole running. This is a per-user
+login app, not a Windows service; follow the desktop guide before moving it.
+
 For agent access to status, query inspection, exact domain rules, subscriptions,
 timed blocking pauses and gravity refresh, see the [local Pi-hole MCP](../pihole-mcp/README.md).
 It uses Docker and the existing container CLI authentication, opens no new port,

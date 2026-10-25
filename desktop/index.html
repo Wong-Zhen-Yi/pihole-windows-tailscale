@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>Pi-hole Desktop</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand"><img src="icon.png" alt="" width="38" height="38"><div>Pi-hole<span>DESKTOP</span></div></div>
+    <div class="nav-label">WORKSPACE</div>
+    <nav aria-label="Main navigation">
+      <button class="nav active" data-view="overview" aria-current="page"><span aria-hidden="true">◫</span> Overview</button>
+      <button class="nav" data-view="settings"><span aria-hidden="true">⚙</span> Settings</button>
+      <button class="nav" data-view="activity"><span aria-hidden="true">≡</span> Activity</button>
+    </nav>
+    <div class="sidebar-bottom"><div class="local-dot"></div> LOCAL DEPLOYMENT<p>Windows + Docker Desktop</p><button class="text-button" id="guide">Setup guide ↗</button></div>
+  </aside>
+  <main>
+    <header><div class="breadcrumb">WORKSPACE <span>/</span> <span id="crumb">OVERVIEW</span></div><span class="tag">ON THIS PC</span></header>
+    <div class="page-heading"><div><p class="eyebrow">YOUR NETWORK, A LITTLE QUIETER.</p><h1 id="page-title">Pi-hole overview</h1><p id="page-description">A home for your local DNS controls.</p></div><button id="refresh" class="button secondary">↻ <span>Refresh</span></button></div>
+    <div id="notice" class="notice" role="alert" hidden></div>
+    <section id="overview" class="view">
+      <article class="hero card">
+        <div class="hero-top"><span class="section-label">PI-HOLE SERVICE</span><span id="status-badge" class="badge">Checking</span></div>
+        <div class="service-mark" aria-hidden="true">⌁</div>
+        <h2 id="service-title">Getting things ready</h2><p id="service-description">Checking Docker Desktop and your Pi-hole container…</p>
+        <div class="actions"><button id="start" class="button primary" disabled>▶ <span>Start Pi-hole</span></button><button id="dashboard" class="button secondary" disabled>Open dashboard ↗</button><button id="stop" class="button danger-text" disabled>Stop</button></div>
+        <div class="hero-foot"><span class="pulse" id="status-dot"></span><span id="service-detail">Connecting to the local Docker engine</span></div>
+      </article>
+      <div class="metrics">
+        <article class="card metric"><span class="section-label">DOCKER ENGINE</span><strong id="engine-value">Checking…</strong><p>Local Linux containers</p></article>
+        <article class="card metric"><span class="section-label">DEPLOYMENT</span><strong id="mode-value">—</strong><p id="mode-detail">Existing bindings are preserved</p></article>
+        <article class="card metric"><span class="section-label">CONTAINER HEALTH</span><strong id="health-value">—</strong><p>Client DNS needs a separate test</p></article>
+      </div>
+      <article class="card startup-preview"><div class="tile-icon" aria-hidden="true">↗</div><div><h3>Ready when you sign in</h3><p id="startup-summary">Choose whether Pi-hole Desktop opens with Windows.</p></div><button class="button secondary" id="startup-settings">Startup settings</button></article>
+      <div class="section-heading"><h3>Recent activity</h3><button class="text-button" id="all-activity">View all →</button></div><div class="card activity-list" id="recent-activity"><p class="empty">Your desktop activity will appear here.</p></div>
+      <p class="page-note">Open the dashboard for query statistics, blocking rules and Teleporter backups.</p>
+    </section>
+    <section id="settings" class="view" hidden>
+      <article class="card settings-card"><div class="section-label">WINDOWS STARTUP</div><div class="setting-row"><div><h3>Launch at Windows sign-in</h3><p>Open this app in the notification area for your Windows user.</p></div><label class="switch"><input id="launch-startup" type="checkbox" aria-label="Launch at Windows sign-in"><span></span></label></div><p id="startup-detail" class="help">This applies after you sign in, not before Windows login.</p><div class="setting-row"><div><h3>Start Pi-hole when this app opens</h3><p>Start Docker Desktop if needed, then start Pi-hole with its existing bindings.</p></div><label class="switch"><input id="auto-start" type="checkbox" aria-label="Start Pi-hole when this app opens"><span></span></label></div><p class="help">Tailscale must be connected before its address can be bound. A startup failure appears in Activity; open the app from the tray and retry.</p></article>
+      <article class="card settings-card"><div class="section-label">DEPLOYMENT PREFERENCES</div><div class="setting-row"><div><h3>Repository folder</h3><p>The Windows launcher uses the private settings in this checkout.</p></div><button class="button secondary" id="choose-repository">Choose folder</button></div><p id="repository-path" class="path-value">No folder selected</p><div class="setting-row"><div><h3>Mode for a new container</h3><p>Used only if no existing Pi-hole container is found.</p></div><select id="mode" aria-label="Mode for a new container"><option value="Local">Local / LAN</option><option value="Tailscale">Tailscale</option></select></div><p class="help">An existing container always keeps its current mode and port bindings. To deliberately change them, use windows/pihole.ps1 and the setup guide.</p></article>
+      <article class="quiet-card"><h3>Keep the essentials running</h3><p>Windows, Docker Desktop and Tailscale (when used) must remain available for DNS. Closing this window keeps the app in the tray. Quitting the app leaves Pi-hole running.</p><button class="text-button" id="quit">Quit desktop app</button></article>
+    </section>
+    <section id="activity" class="view" hidden><article class="card settings-card"><div class="section-label">THIS APP SESSION</div><p class="help">The latest 40 desktop operations. Container logs and DNS query history stay in the Pi-hole dashboard.</p><div class="activity-list" id="full-activity"></div></article></section>
+    <footer><span><span class="local-dot"></span> Pi-hole Desktop</span><span>Your settings stay on this PC.</span></footer>
+  </main>
+  <script src="renderer.js"></script>
+</body>
+</html>

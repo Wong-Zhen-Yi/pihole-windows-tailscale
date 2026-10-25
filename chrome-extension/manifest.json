@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Pi-hole Companion",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Pi-hole v6 statistics, top domains and clients, query log, timed pauses and exact-domain rules.",
   "minimum_chrome_version": "102",
   "permissions": ["storage", "activeTab"],

@@ -16,6 +16,7 @@ maintained separately. The source retains its [EUPL 1.2 license](LICENSE).
 | --- | --- |
 | First install, password, local/LAN access | [Windows setup](windows/README.md) |
 | Phone access over mobile data | [Tailscale setup and undo steps](windows/TAILSCALE.md) |
+| Windows desktop controls and launch at sign-in | [Pi-hole Desktop (Electron)](desktop/README.md) |
 | Chrome statistics, domain tools and launch button | [Pi-hole Companion extension](chrome-extension/README.md) |
 | Agent status checks and filtering changes | [Local Pi-hole MCP](pihole-mcp/README.md) |
 | Restart, update, backup, troubleshooting | Commands below |
@@ -80,6 +81,12 @@ service without the additional Tailscale bindings. The launcher does not
 remember the switch. Docker's restart policy helps once its engine is running,
 but Windows, Docker Desktop and Tailscale must remain available; host sleep or
 shutdown interrupts DNS for dependent devices.
+
+The optional [Pi-hole Desktop app](desktop/README.md) provides Start/Stop,
+dashboard access, container health and a tray icon. Its Settings can launch the
+app at Windows sign-in and, separately, start Docker Desktop and Pi-hole when
+the app opens. Both options default to off. Existing containers keep their
+Local/Tailscale bindings. It does not change DNS or firewall settings.
 
 The optional [Chrome launch helper](chrome-extension/README.md#launch-pi-hole-from-chrome-on-windows)
 can start Docker Desktop and Pi-hole from the toolbar. Install it for your Windows

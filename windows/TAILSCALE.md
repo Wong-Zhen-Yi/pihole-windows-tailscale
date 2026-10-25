@@ -38,6 +38,14 @@ and includes the overlay when creating a missing container. Connect Tailscale
 before using **Launch Pi-hole**. Reinstall the helper after deliberately changing
 deployment mode; it does not change firewall rules or Tailscale DNS settings.
 
+The optional [Pi-hole Desktop GUI](../desktop/README.md) also preserves an existing
+container's Tailscale bindings. For first creation, select **Tailscale** under
+Settings and choose this repository folder. Connect Tailscale before clicking
+Start or using the app's opt-in automatic startup. The GUI's Windows sign-in
+option starts the app in the tray; its separate Pi-hole auto-start switch starts
+Docker and Pi-hole. It does not connect Tailscale or configure firewall/tailnet
+DNS. If startup fails, open the tray app, check Activity and retry after connecting.
+
 ## 2. Allow DNS through the Windows firewall
 
 Run the following in **Administrator PowerShell**. These rules apply only to

@@ -242,7 +242,7 @@ $("connect-form").addEventListener("submit", (event) => {
       activeView = "overview";
       await chrome.storage.local.set({ server });
       $("server").value = server;
-      $("server-name").textContent = server;
+      $("server-name").textContent = `${server}/admin/`;
       $("disconnect").hidden = false;
       api = new PiholeApi(server);
       const sid = await api.login(password);
@@ -360,7 +360,7 @@ void run(async () => {
   const { connection } = await chrome.storage.session.get("connection");
   if (!server) return;
   $("server").value = normalizeServer(server);
-  $("server-name").textContent = server;
+  $("server-name").textContent = `${normalizeServer(server)}/admin/`;
   $("disconnect").hidden = false;
   if (!await chrome.permissions.contains({ origins: [hostPermission(server)] })) {
     await chrome.storage.session.remove("connection");

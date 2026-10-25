@@ -53,6 +53,13 @@ health check.
 
 ## Views and controls
 
+- **Open dashboard** is a full-width button in the top connection card, available
+  before signing in and in the expanded view. It opens the address in Connection
+  settings with `/admin/` appended, for example `http://localhost:8080/admin/`.
+  The address shown in the card includes this dashboard path. The bare server
+  address `http://localhost:8080` can return a Pi-hole 404; keep the bare address
+  in Connection settings for API access and use the button for the dashboard.
+  After updating to **1.2.1**, reload the extension at `chrome://extensions`.
 - **Overview** adds blocklist size, unique queried domains, cached/local replies,
   forwarded queries, query rate and last gravity update to the four main counters.
   The bar shows blocked share, not a historical trend. Statistics use Pi-hole's
@@ -179,6 +186,8 @@ extension's card and reconnect.
 ## Troubleshooting and development
 
 - Open the same server's `/admin/` dashboard to check reachability first.
+- A 404 at the bare server address is expected on some installations. Use
+  **Open dashboard** or append `/admin/` to the address in the browser.
 - A 401 means sign in again; use an application password with 2FA.
 - A 403 can mean the application session cannot modify blocking; use the dashboard.
 - If Chrome site access was revoked, reconnect and grant it again.

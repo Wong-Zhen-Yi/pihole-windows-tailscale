@@ -39,11 +39,12 @@ const os = require("node:os");
       window.__calls = [];
       window.__mock = { failClient: false, writeDenied: false, expired: false, empty: false, helperMissing: false, nativeDenied: false };
       window.__nativeCalls = [];
+      window.__tabs = [];
       window.__storage = { local, session };
       window.chrome = {
         storage: { local: store(local), session: store(session) },
         permissions: { request: async value => value.permissions ? !window.__mock.nativeDenied : true, contains: async () => true, remove: async () => true },
-        tabs: { query: async () => [{ url: "https://www.example.com/a?private=1" }], create: async () => {} },
+        tabs: { query: async () => [{ url: "https://www.example.com/a?private=1" }], create: async value => { window.__tabs.push(value); } },
         runtime: { id: "a".repeat(32), getURL: value => `chrome-extension://test/${value}`, sendNativeMessage: async (host, request) => {
           window.__nativeCalls.push({ host, request });
           if (window.__mock.helperMissing) throw new Error("not installed");
@@ -74,6 +75,22 @@ const os = require("node:os");
     const click = async id => { await page.locator(`#${id}`).click(); await idle(); };
     await page.goto(`http://127.0.0.1:${server.address().port}/popup.html`);
     await idle();
+    // Dashboard access is prominent and works without an API session or helper.
+    const dashboard = page.getByRole("button", { name: "Open dashboard" });
+    assert.ok(await dashboard.isVisible());
+    assert.ok(await dashboard.evaluate(button => button.getBoundingClientRect().bottom <= innerHeight));
+    for (const address of ["http://localhost:8080", "http://localhost:8080/admin/", "https://pi.hole:8443/admin"]) {
+      await page.locator("#server").fill(address);
+      await click("dashboard");
+      assert.deepEqual(await page.evaluate(() => window.__tabs.at(-1)), { url: `${new URL(address).origin}/admin/` });
+    }
+    assert.equal(await page.evaluate(() => window.__calls.length), 0);
+    const openedTabs = await page.evaluate(() => window.__tabs.length);
+    await page.locator("#server").fill("http://localhost:8080/wrong-path");
+    await click("dashboard");
+    assert.equal(await page.evaluate(() => window.__tabs.length), openedTabs);
+    assert.ok(await page.locator("#error").isVisible());
+    await page.locator("#server").fill("http://localhost:8080");
     assert.ok(await page.locator("#launch-pihole").isVisible());
     assert.ok((await page.locator("#launch-setup").textContent()).includes("a".repeat(32)));
     // Launch controls work before API login and handle setup/permission failures.
@@ -96,6 +113,9 @@ const os = require("node:os");
     await click("connect");
     assert.equal(await page.locator("#status").textContent(), "Blocking is active");
     assert.equal(await page.locator("#password").inputValue(), "");
+    assert.equal(await page.locator("#server-name").textContent(), "http://localhost:8080/admin/");
+    await click("dashboard");
+    assert.deepEqual(await page.evaluate(() => window.__tabs.at(-1)), { url: "http://localhost:8080/admin/" });
     assert.equal(await page.locator("#gravity").textContent(), "178,430");
     assert.equal(await page.locator("#frequency").textContent(), "2.4");
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth), 460);
@@ -154,6 +174,9 @@ const os = require("node:os");
     await idle();
     assert.equal(await page.locator("body").getAttribute("data-expanded"), "true");
     assert.equal(await page.locator("#expand").isVisible(), false);
+    assert.ok(await dashboard.isVisible());
+    await click("dashboard");
+    assert.deepEqual(await page.evaluate(() => window.__tabs.at(-1)), { url: "http://localhost:8080/admin/" });
     // A separate context has the browser's genuine fetch implementation. Mocks
     // cannot catch the Window receiver requirement that broke real logins.
     const nativeContext = await browser.newContext({ viewport: { width: 190, height: 600 } });

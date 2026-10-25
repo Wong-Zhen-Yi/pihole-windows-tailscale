@@ -86,6 +86,18 @@ structure, error handling and metadata preservation. They do not change Pi-hole.
 tool discovery and live read-only Pi-hole status. See the
 [MCP guide](../pihole-mcp/README.md) for prerequisites and recovery.
 
+## Electron desktop tests
+
+From `desktop/`, install dependencies with `npm ci`, then run `npm test`.
+Node tests cover fixed Docker actions, existing Tailscale binding preservation,
+storage checks, startup arguments, timeouts and isolated IPC. `npm run test:ui`
+uses the included Playwright dependency and installed Chrome; it checks UI states,
+startup switches, failed writes and safe text with a mocked desktop bridge.
+These tests do not change live DNS or the Windows startup registry. See the
+[desktop guide](../desktop/README.md) for build and manual sign-in validation.
+After packaging, `npm run test:smoke` uses the actual Windows executable and a
+running local deployment for read-only status checks, with startup writes mocked.
+
 ## Optional: override BATS library versions
 
 `test/run.sh` accepts optional environment variable overrides when building test images:

@@ -1,0 +1,22 @@
+{
+  "name": "pihole-desktop",
+  "productName": "Pi-hole Desktop",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Windows desktop controls for the Pi-hole Docker deployment",
+  "license": "EUPL-1.2",
+  "main": "main.cjs",
+  "engines": { "node": ">=22.12.0" },
+  "scripts": {
+    "start": "electron .",
+    "test": "node --test ../test/test_desktop.cjs",
+    "test:ui": "node ../test/test_desktop_ui.cjs",
+    "test:smoke": "node ../test/test_desktop_smoke.cjs",
+    "package": "node package.cjs"
+  },
+  "devDependencies": {
+    "@electron/packager": "20.3.0",
+    "electron": "45.0.0",
+    "playwright": "1.64.1"
+  }
+}
