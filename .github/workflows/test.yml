@@ -25,6 +25,9 @@ jobs:
           # If FAIL is 1 then we fail.
           [[ $FAIL == 1 ]] && exit 1 || echo "Scripts are executable!"
 
+      - name: Validate Windows Compose deployment
+        run: python3 test/test_windows_compose.py
+
       - name: Differential ShellCheck
         uses: redhat-plumbers-in-action/differential-shellcheck@f51c7c0d32777d00de777131d25918617a246415 #v5.5.7
         with:
@@ -46,6 +49,21 @@ jobs:
 
       - name: Run editorconfig-checker
         run: editorconfig-checker
+
+  windows-launcher:
+    if: github.event.pull_request.draft == false
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 #v7.0.1
+
+      - name: Test Windows PowerShell launcher
+        shell: powershell
+        run: .\test\test_windows_launcher.ps1
+
+      - name: Test PowerShell 7 launcher
+        shell: pwsh
+        run: .\test\test_windows_launcher.ps1
 
   distro-test:
     if: github.event.pull_request.draft == false

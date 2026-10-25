@@ -1,0 +1,24 @@
+name: pihole-windows
+
+services:
+  pihole:
+    # Set PIHOLE_IMAGE to a release tag or digest to pin updates.
+    image: ${PIHOLE_IMAGE:-pihole/pihole:latest}
+    ports:
+      # Local-only by default. Set PIHOLE_BIND_IP to your Windows LAN IPv4
+      # address in .env to serve other devices on your trusted network.
+      - "${PIHOLE_BIND_IP:-127.0.0.1}:53:53/tcp"
+      - "${PIHOLE_BIND_IP:-127.0.0.1}:53:53/udp"
+      - "${PIHOLE_BIND_IP:-127.0.0.1}:${PIHOLE_WEB_PORT:-8080}:80/tcp"
+    environment:
+      TZ: ${TZ:-Etc/UTC}
+      # Docker's bridge network requires listening for forwarded queries.
+      # Host port bindings and the Windows firewall control external access.
+      FTLCONF_dns_listeningMode: ALL
+    volumes:
+      # Use a Linux named volume, not an NTFS bind mount, for database storage.
+      - pihole-data:/etc/pihole
+    restart: unless-stopped
+
+volumes:
+  pihole-data:

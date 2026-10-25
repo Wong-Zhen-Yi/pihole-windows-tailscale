@@ -1,0 +1,8 @@
+# Optional overlay: preserves the base localhost/LAN bindings and adds only
+# the Windows host's Tailscale address. Start Tailscale before the container.
+services:
+  pihole:
+    ports:
+      - "${PIHOLE_TAILSCALE_IP:?Set PIHOLE_TAILSCALE_IP in windows/.env}:53:53/tcp"
+      - "${PIHOLE_TAILSCALE_IP:?Set PIHOLE_TAILSCALE_IP in windows/.env}:53:53/udp"
+      - "${PIHOLE_TAILSCALE_IP:?Set PIHOLE_TAILSCALE_IP in windows/.env}:${PIHOLE_WEB_PORT:-8080}:80/tcp"
